@@ -2,11 +2,9 @@ package com.springproducts.produtosapi.controller;
 
 import com.springproducts.produtosapi.model.Produto;
 import com.springproducts.produtosapi.repository.ProdutoRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -19,6 +17,7 @@ public class ProdutoController {
         this.produtoRepository = produtoRepository;
     }
 
+    // Salvar produto
     @PostMapping
     public Produto salvar(@RequestBody Produto produto) {
         System.out.println("Produto recebido: " + produto);
@@ -27,5 +26,32 @@ public class ProdutoController {
         produtoRepository.save(produto);
         return produto;
     }
+
+    // Retornar produto ler
+    @GetMapping("{id}")
+    public Produto obterPorId(@PathVariable("id") String id) {
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
+        if (produtoOptional.isPresent()) {
+            System.out.println("Produto encontrado: " + produtoOptional.get());
+            return produtoOptional.get();
+        } else {
+            System.out.println("Produto não encontrado para o ID: " + id);
+            return null;
+        }
+    }
+
+    //Deletar produto
+    @DeleteMapping("{id}")
+    public void deletar(@PathVariable("id") String id) {
+        produtoRepository.deleteById(id);
+    }
+
+    // Atualizar
+    @PutMapping("{id}")
+    public void atualizar(@PathVariable("id") String id, @RequestBody Produto produto) {
+        produto.setId(id);
+        produtoRepository.save(produto);
+    }
+
 
 }
